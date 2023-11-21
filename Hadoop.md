@@ -15,15 +15,15 @@ HDFS và MapReduce là hai thành phần chính của một Hadoop cluster. Nhì
 
 ### 2.1. HDFS
 
-Là thuật ngữ dùng để chỉ hệ thống file phân tán siêu lớn. Bởi hệ thống này cần phải cung cấp khả năng lưu trữ dữ liệu khổng lồ.
+HDFS là một hệ thống tệp phân tán được thiết kế để lưu trữ dữ liệu lớn trên nhiều máy tính.
 
 HDFS có kiến trúc `master/slave`. Trên một cluster chạy HDFS có hai loại node là NameNode và DataNode. Một cluster có duy nhất một NameNode và có một hay nhiều DataNode.
 
 ![HDFS Architecture](https://i.pinimg.com/originals/c6/c3/1a/c6c31aa5f418ab6ac2f4122ba3f4db3b.jpg)
 
-`NameNode` là nơi lưu trữ thông tin metadata của cụm, bao gồm các thông tin như vị trí, số lượng block của file, quyền truy cập vào file đó,… NameNode là nơi tiếp nhận các yêu cầu đọc ghi từ client và điều phối hoạt động của cụm. 
+`NameNode` Quản lý siêu dữ liệu (metadata) về các block dữ liệu và vị trí của chúng trên các DataNode.
 
-`DataNode` là nơi lưu trữ dữ liệu vật lý, đây là nơi lưu trữ block của file. Các DataNode có nhiệm vụ báo cáo tình trạng đến NameNode, thông báo về danh sách các block mà nó quản lý. Nếu 1 DataNode chết, NameNode sẽ thực hiện replicate các block của DataNode này đến các DataNode khác để đảm bảo dữ liệu luôn sẵn sàng. Dựa theo sự điều phối của NameNode mà DataNode là nơi thực hiện các yêu cầu đọc, ghi file của người dùng.
+`DataNode` Lưu trữ thực tế của dữ liệu và thực hiện các thao tác đọc/ghi dữ liệu theo hướng dẫn của NameNode.
 
 Bên cạnh NameNode còn có một tiến trình gọi là SecondaryNamenode hoạt động như một tiến trình hỗ trợ NameNode và không dùng để thay thế NameNode. 
 
@@ -33,41 +33,64 @@ Bên cạnh NameNode còn có một tiến trình gọi là SecondaryNamenode ho
 
 ### 2.2. MapReduce
 
-Là 1 Framework. Chức năng chính là dùng để viết các ứng dụng xử lý song song dữ liệu với dung lượng lớn.
+MapReduce là một mô hình lập trình và một khung làm việc phân tán để xử lý lớn lượng dữ liệu.
 
-Bộ phận này cũng sẽ có khả năng chịu lỗi cao xuyên suốt hàng ngàn cluster máy tính mà không bị ngưng bất ngờ.
+Thành phần
+- JobTracker: Quản lý và lên lịch các Job trên cluster.
+- TaskTracker: Thực hiện các tác vụ cụ thể của một Job, theo sự điều phối của JobTracker.
 
-Gồm map và reduce
-- Map: được thực hiện đầu tiên với có chức năng tải, phân tích dữ liệu đầu vào. Sau đó Map sẽ được chuyển đổi thành tập dữ liệu theo cặp key/value 
-- Reduce: có chức năng nhận kết quả đầu ra từ tác vụ Map xuất ra. Sau đó, Reduce sẽ kết hợp dữ liệu lại với nhau thành tập dữ liệu nhỏ hơn. 
+Nhiệm vụ: 
+- Phân chia công việc thành các nhiệm vụ con (map và reduce) và phân phối chúng trên cluster.
+- Thu thập và tổng hợp kết quả từ các nhiệm vụ con.
 
 ### 2.3. Yarn resource
-Quản lý tài nguyên của các hệ thống lưu trữ dữ liệu và chạy phân tích.
+YARN là một hệ thống quản lý tài nguyên và lên lịch cho các ứng dụng chạy trên Hadoop.
 
-### 2.4. Common 
-Là các thư viện và tiện ích cần thiết của Java để các module khác sử dụng. Những thư viện này cung cấp hệ thống file và lớp OS trừu tượng, đồng thời chứa các mã lệnh Java để khởi động Hadoop.
+Thành Phần Cấu Tạo:
+- ResourceManager: Quản lý tài nguyên trên toàn bộ cluster và quyết định vị trí cho ứng dụng chạy.
+- NodeManager: Quản lý tài nguyên trên mỗi máy tính và thực hiện các nhiệm vụ theo hướng dẫn của ResourceManager.
+
+Nhiệm vụ:
+- Phân phối tài nguyên cho các ứng dụng chạy trên cluster.
+- Lên lịch cho các ứng dụng và theo dõi việc sử dụng tài nguyên.
+
+### 2.4. Hadoop Ecosystem 
+Bên cạnh các thành phần cơ bản, Hadoop có một hệ sinh thái phong phú với nhiều dự án và thành phần bổ sung như Apache Hive (SQL-like query language), Apache HBase (NoSQL database), Apache Spark (in-memory data processing), và nhiều dự án khác.
+
+Thành Phần Cấu Tạo:
+- Các dự án và thành phần bổ sung trong hệ sinh thái Hadoop.
+
+Nhiệm Vụ:
+- Cung cấp các công cụ và dịch vụ bổ sung cho phân tích và xử lý dữ liệu.
+
+Tổng quan về kiến trúc Hadoop cho thấy sự phân tán và linh hoạt của nó, cho phép xử lý và lưu trữ lớn lượng dữ liệu trên nhiều máy tính. Hadoop Ecosystem mở rộng khả năng của Hadoop bằng cách cung cấp nhiều công cụ và dự án phụ trợ để đáp ứng các yêu cầu đặc biệt của ứng dụng và ngành công nghiệp cụ thể.
 
 # Cơ chế lưu dữ liệu dưới HDFS
 ### Block
 Dữ liệu trong HDFS luôn được lưu trữ theo block. Vì vậy, khối dữ liệu duy nhất được chia thành nhiều block có kích thước 128MB (mặc định) và có thể thay đổi thủ công.
 ![](https://media.geeksforgeeks.org/wp-content/uploads/20200621121959/3164-1.png)
 
-### Replication
-Đảm bảo tính sẵn có của data: Tạo 1 bản sao của  dữ liệu và số lần tạo bản sao đc gọi là Replication Factor. Như đã thấy trong file block thì HDFS lưu trữ dữ liệu dưới dạng nhiều block khác nhau và cùng lúc Hadoop tạo bản sao của các khối đó.
+Việc chia dữ liệu thành các block giúp quản lý dữ liệu một cách hiệu quả và cho phép xử lý song song trên nhiều máy tính.
 
-Theo mặc định, Replication Factor cho Hadoop được đặt thành 3, có thể thay đổi thủ công. Như trong ví dụ trên, ta đã tạo 4 block, nghĩa là có nghĩa là số bản sao của mỗi khối tệp được tạo tổng cộng 4×3 = 12 block được tạo ra cho mục đích backup.
+### Replicate
 
-Điều này là do để chạy Hadoop, ta đang sử dụng phần cứng thông thường (phần cứng rẻ tiền) có thể bị hỏng bất kỳ lúc nào. Đó là lý do tại sao chúng ta cần một tính năng như vậy trong HDFS có thể tạo bản sao của các khối tệp đó cho mục đích sao lưu, điều này gọi là **khả năng chịu lỗi**.
---> Phần cứng rẻ tiền - > Dễ hỏng -> cần sao lưu nhiều
+Mỗi khối dữ liệu được sao lưu (replicate) trên nhiều máy tính trong cluster để đảm bảo sự chịu lỗi và tin cậy.
 
-### Rack awareness
-Là tập hợp vật lý của các node  trong Hadoop cluster. 1 cụm Hadoop lớn gồm nhiều  Rack. Với sự trợ giúp của Racks,  Namenode sẽ chọn Datanode gần nhất để đạt được hiệu suất tối đa trong khi thực hiện đọc/ghi thông tin giúp giảm Lưu lượng mạng.
+Mặc định, HDFS sao lưu mỗi block 3 lần (replication factor là 3). Các bản sao của block được lưu trữ trên các máy tính khác nhau để đảm bảo sự chịu lỗi trong trường hợp một hoặc nhiều máy tính gặp sự cố.
 
-Khi sao chép các bản ghi của block, HDFS thực hiện ghi vào DataNode đầu tiên trên một máy, 2 bản ghi còn lại sẽ ghi vào 2 DataNode thuộc Rack khác Rack ban đầu. 
+### Distribution
 
-Việc sử dụng Rack Awareness Algorithm này giúp nâng cao khả năng chịu lỗi của HDFS, giả sử trong trường hợp 1 DataNode lỗi vẫn có 2 DataNode khác sẵn sàng, rủi ro hơn nữa là tất cả DataNode thuộc cùng 1 Rack chết thì vẫn còn DataNode ở Rack khác sẵn sàng.
+Các block và các bản sao của chúng được phân tán trên nhiều máy tính trong cluster.
 
- ![](https://scontent-hkg4-1.xx.fbcdn.net/v/t1.6435-9/90299586_2139299106215827_9074506172567912448_n.jpg?stp=dst-jpg_p720x720&_nc_cat=102&ccb=1-7&_nc_sid=9f7757&_nc_eui2=AeHhJiJzYT44dabutSF7Dp-hcMeADl952dlwx4AOX3nZ2c-43RAppeEWA65_ugdE5QdEyzzphbhwi9UuxOG52vWz&_nc_ohc=9ozXv052bmkAX-CDxG1&_nc_ht=scontent-hkg4-1.xx&oh=00_AfA6qX0apFiasvVNHCQ3Paw8n9WcSPCF--C2iYlHX3L1BQ&oe=657CFC8B)
+Mỗi máy tính trong HDFS cluster đảm nhận vai trò của một DataNode và lưu trữ một số khối dữ liệu và bản sao.
+
+### Metadata và NameNode:
+
+Metadata về các khối dữ liệu, vị trí của chúng, và các thông tin khác được quản lý bởi một thành phần gọi là NameNode. NameNode duy trì một bản đồ toàn bộ hệ thống file trong HDFS và theo dõi vị trí của từng khối dữ liệu.
+
+### DataNode:
+
+Mỗi máy tính trong cluster chạy một tiến trình gọi là DataNode, chịu trách nhiệm lưu trữ dữ liệu thực tế. DataNode chủ động báo cáo về sự trạng thái và sức khỏe của dữ liệu mà nó lưu trữ đến NameNode.
 
 # 3. Why Hadoop?
 ### 3.1 Ưu điểm
